@@ -40,19 +40,12 @@ function BoardWrapper() {
     <div className="min-h-screen h-screen bg-deepPurple font-inter text-white flex flex-col">
       <TopBar sessionId={sessionId} guestName={sanitizeInput(guestName)} />
       <div className="flex-1 flex overflow-hidden h-0">
-        <Split
-          className="flex flex-1 h-full"
-          sizes={[50, 50]}
-          minSize={200}
-          gutterSize={8}
-          direction="horizontal"
-          style={{ display: 'flex', height: '100%' }}
-        >
+        <div className="flex flex-1 h-full">
           <Whiteboard sessionId={sessionId} guestName={guestName} />
           <div className="flex flex-col flex-1 bg-surfacePurple rounded-tl-3xl p-4 h-full">
             <CodeEditor sessionId={sessionId} />
           </div>
-        </Split>
+        </div>
       </div>
       {showPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
