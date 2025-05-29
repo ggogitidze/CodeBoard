@@ -15,7 +15,9 @@ export function useBoardWebSocket({ sessionId, guestName, onRemoteUpdate, onConn
     let ws;
     let reconnectTimeout;
     function connect() {
-      ws = new window.WebSocket(`ws://localhost:8080/ws/board/${sessionId}`);
+      // Use environment variable for backend host, fallback to localhost
+      const backendHost = process.env.REACT_APP_BACKEND_WS_URL || 'ws://localhost:8080';
+      ws = new window.WebSocket(`${backendHost}/ws/board/${sessionId}`);
       wsRef.current = ws;
       ws.onopen = () => {
         // Join session

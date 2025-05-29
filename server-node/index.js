@@ -98,7 +98,7 @@ app.post('/api/execute', async (req, res) => {
 });
 
 // --- Start Server ---
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Node.js server started on :${PORT}`);
 }); 
