@@ -13,6 +13,19 @@ if (typeof window !== "undefined") {
       e.stopImmediatePropagation();
     }
   });
+  window.addEventListener('unhandledrejection', e => {
+    if (e.reason && e.reason.message && e.reason.message.includes('ResizeObserver loop')) {
+      e.preventDefault();
+    }
+  });
+  // Suppress ResizeObserver loop limit exceeded warning
+  const origConsoleError = window.console.error;
+  window.console.error = function(...args) {
+    if (typeof args[0] === 'string' && args[0].includes('ResizeObserver loop limit exceeded')) {
+      return;
+    }
+    origConsoleError.apply(window.console, args);
+  };
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
