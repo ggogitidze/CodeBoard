@@ -1,0 +1,8 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for CodeBoard",
+  "dependencies": {
+    "axios": "^1.9.0"
+  }
+} 
