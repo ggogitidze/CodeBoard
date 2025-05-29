@@ -5,7 +5,6 @@ import Whiteboard from './components/Whiteboard';
 import CodeEditor from './components/CodeEditor';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
-import Split from 'react-split';
 
 function BoardWrapper() {
   const { sessionId } = useParams();
