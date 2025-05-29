@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { UserCircleIcon, PlusIcon, GlobeAltIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import QRCode from 'react-qr-code';
 
 export default function TopBar({ guestName, sessionId }) {
   const [showInvite, setShowInvite] = useState(false);
@@ -96,7 +95,7 @@ export default function TopBar({ guestName, sessionId }) {
               <XMarkIcon className="h-6 w-6" />
             </button>
             <div className="mb-4">
-              <QRCode value={url} bgColor="#28204a" fgColor="#BFAAFF" size={128} />
+              {/* QRCode component removed */}
             </div>
             <label className="text-[#BFAAFF] text-xs mb-1 font-semibold">Copy Link</label>
             <div className="flex w-full gap-2 items-center">
