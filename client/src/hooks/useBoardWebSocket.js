@@ -35,6 +35,10 @@ export function useBoardWebSocket({ sessionId, guestName, onRemoteUpdate, onConn
         reconnectTimeout = setTimeout(connect, 1000);
       };
       ws.onerror = (err) => {
+        if (process.env.NODE_ENV === 'production') {
+          // Suppress WebSocket errors in production
+          return;
+        }
         if (onError) onError(err.message || 'WebSocket error');
         ws.close();
       };
