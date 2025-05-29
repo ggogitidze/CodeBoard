@@ -1,0 +1,14 @@
+[build]
+  command = "cd client && npm install && npm run build"
+  publish = "client/build"
+  functions = "server-node"
+
+[dev]
+  command = "cd client && npm start"
+  port = 3000
+  targetPort = 3000
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
