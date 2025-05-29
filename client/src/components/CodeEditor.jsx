@@ -38,6 +38,8 @@ const defaultCode = {
   r: `cat('Hello, world!\\n')`,
 };
 
+const apiBaseUrl = process.env.REACT_APP_BACKEND_API_URL || 'http://localhost:8080';
+
 export default function CodeEditor({ sessionId }) {
   const [selectedLang, setSelectedLang] = useState(languages[0].value);
   const [code, setCode] = useState(defaultCode[languages[0].value]);
@@ -112,7 +114,7 @@ export default function CodeEditor({ sessionId }) {
     setError('');
     const langObj = languages.find(l => l.value === selectedLang);
     try {
-      const res = await fetch('http://localhost:8080/api/execute', {
+      const res = await fetch(`${apiBaseUrl}/api/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
