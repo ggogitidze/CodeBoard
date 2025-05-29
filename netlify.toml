@@ -1,5 +1,5 @@
 [build]
-  command = "cd client && npm install && npm run build"
+  command = "cd client && npm install && npm run build && cd ../server-node && npm install"
   publish = "client/build"
   functions = "server-node"
 
@@ -11,4 +11,7 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core" 
