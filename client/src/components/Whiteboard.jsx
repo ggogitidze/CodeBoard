@@ -248,6 +248,7 @@ export default function Whiteboard({ sessionId, guestName }) {
       } : tb));
     }
     if (resizingTextbox) {
+      const tb = textboxes.find(tb => tb.id === resizingTextbox);
       setTextboxes((prev) => prev.map(tb => tb.id === resizingTextbox ? {
         ...tb,
         w: Math.max(40, (e.clientX - tb.x * zoom) / zoom),
@@ -307,7 +308,7 @@ export default function Whiteboard({ sessionId, guestName }) {
   );
 
   return (
-    <div className="w-full md:w-[40%] bg-[#18122B] border-r border-[#28204a] flex flex-row items-stretch relative min-w-0 overflow-x-auto">
+    <div className="w-full bg-[#18122B] border-r border-[#28204a] flex flex-row items-stretch relative min-w-0 overflow-x-auto h-full">
       {/* Sidebar toggle for mobile */}
       <button className="md:hidden absolute top-2 left-2 z-40 bg-[#28204a] text-[#BFAAFF] rounded p-2 shadow border border-[#393053]" onClick={()=>setSidebarOpen(v=>!v)}>
         {sidebarOpen ? '✕' : '☰'}
@@ -353,17 +354,17 @@ export default function Whiteboard({ sessionId, guestName }) {
             <div className="bg-red-900/40 border border-red-700 rounded px-6 py-4 text-red-300 font-mono text-base shadow-xl">{wsError}</div>
           </div>
         )}
-        {/* Removed grid background */}
+        {/* Canvas that fills the entire whiteboard area */}
         <canvas
           ref={canvasRef}
-          width={800}
-          height={600}
+          width={1200}
+          height={800}
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
-            width: `${800 * zoom}px`,
-            height: `${600 * zoom}px`,
+            width: `${1200 * zoom}px`,
+            height: `${800 * zoom}px`,
             zIndex: 10,
             background: 'transparent',
             cursor: tool === TOOL.ERASER ? 'cell' : tool === TOOL.TEXT && addingTextbox ? 'copy' : 'crosshair',

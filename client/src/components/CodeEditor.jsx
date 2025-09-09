@@ -4,20 +4,21 @@ import { Box } from '@mui/material';
 
 const languages = [
   { label: 'Python', value: 'python', version: '3.10.0' },
-  { label: 'JavaScript', value: 'javascript', version: '16.3.0' },
+  { label: 'JavaScript', value: 'javascript', version: '18.15.0' },
   { label: 'Java', value: 'java', version: '15.0.2' },
   { label: 'C++', value: 'cpp', version: '10.2.0' },
   { label: 'C', value: 'c', version: '10.2.0' },
-  { label: 'Go', value: 'go', version: '1.16.2' },
+  { label: 'Go', value: 'go', version: '1.21.0' },
   { label: 'Ruby', value: 'ruby', version: '3.0.0' },
-  { label: 'PHP', value: 'php', version: '8.0.0' },
-  { label: 'Rust', value: 'rust', version: '1.52.1' },
-  { label: 'TypeScript', value: 'typescript', version: '4.2.3' },
-  { label: 'Kotlin', value: 'kotlin', version: '1.4.21' },
-  { label: 'Swift', value: 'swift', version: '5.3.3' },
-  { label: 'Scala', value: 'scala', version: '2.13.4' },
-  { label: 'Perl', value: 'perl', version: '5.32.0' },
-  { label: 'R', value: 'r', version: '4.0.4' },
+  { label: 'PHP', value: 'php', version: '8.2.0' },
+  { label: 'Rust', value: 'rust', version: '1.70.0' },
+  { label: 'TypeScript', value: 'typescript', version: '5.0.0' },
+  // Less commonly supported languages - may cause errors
+  { label: 'Kotlin', value: 'kotlin', version: '1.8.0' },
+  { label: 'Swift', value: 'swift', version: '5.5.0' },
+  { label: 'Scala', value: 'scala', version: '3.3.0' },
+  { label: 'Perl', value: 'perl', version: '5.34.0' },
+  { label: 'R', value: 'r', version: '4.3.0' },
 ];
 
 const defaultCode = {
@@ -125,17 +126,30 @@ export default function CodeEditor({ sessionId }) {
       });
       if (!res.ok) throw new Error('Network error: ' + res.status);
       const data = await res.json();
+      
+      // Check for Piston API specific errors
+      if (data.message && data.message.includes('language')) {
+        setError(`Language '${selectedLang}' is not supported. Please try a different language.`);
+        return;
+      }
+      
       if (data.run && data.run.output !== undefined) {
         setOutput(data.run.output);
       } else if (data.output) {
         setOutput(data.output);
       } else if (data.error) {
         setOutput('Error: ' + data.error);
+      } else if (data.message) {
+        setOutput('Message: ' + data.message);
       } else {
         setOutput('Unknown response: ' + JSON.stringify(data));
       }
     } catch (err) {
-      setError('Failed to execute code. Please try again. (' + err.message + ')');
+      if (err.message.includes('500')) {
+        setError(`Server error: The language '${selectedLang}' may not be supported. Try Python, JavaScript, or Java.`);
+      } else {
+        setError('Failed to execute code. Please try again. (' + err.message + ')');
+      }
     } finally {
       setLoading(false);
     }
@@ -156,21 +170,105 @@ export default function CodeEditor({ sessionId }) {
       </div>
       <div className="flex-1 min-h-[120px] flex flex-col relative">
         <MonacoEditor
+          key={`${selectedLang}-${editorHeight}`}
           height={editorHeight + 'px'}
           width="100%"
           language={selectedLang === 'cpp' ? 'cpp' : selectedLang}
           value={code}
           theme="vs-dark"
           onChange={value => setCode(value)}
+          beforeMount={(monaco) => {
+            monaco.editor.defineTheme('custom-dark', {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [],
+              colors: {
+                'editor.background': '#18122B',
+                'editor.foreground': '#BFAAFF',
+                'editorCursor.foreground': '#BFAAFF',
+                'editor.lineHighlightBackground': 'transparent',
+                'editor.selectionBackground': '#393053',
+                'editor.inactiveSelectionBackground': 'transparent',
+                'editorBracketMatch.background': 'transparent',
+                'editorBracketMatch.border': 'transparent',
+              }
+            });
+          }}
+          onMount={(editor, monaco) => {
+            monaco.editor.setTheme('custom-dark');
+            // Ensure proper cursor behavior
+            editor.updateOptions({
+              cursorSurroundingLines: 0,
+              cursorSurroundingLinesStyle: 'all',
+            });
+          }}
           options={{
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: 14,
             minimap: { enabled: false },
             lineNumbers: 'on',
             scrollbar: { vertical: 'auto', horizontal: 'auto' },
-            overviewRulerLanes: 0,
-            renderLineHighlight: 'all',
             scrollBeyondLastLine: false,
+            cursorBlinking: 'blink',
+            cursorStyle: 'line',
+            cursorWidth: 1,
+            automaticLayout: true,
+            wordWrap: 'off',
+            fixedOverflowWidgets: true,
+            // Disable all problematic features
+            matchBrackets: 'never',
+            autoClosingBrackets: 'never',
+            autoClosingQuotes: 'never',
+            autoSurround: 'never',
+            bracketPairColorization: { enabled: false },
+            guides: { bracketPairs: false, indentation: false },
+            highlightActiveBracketPair: false,
+            renderLineHighlight: 'none',
+            renderWhitespace: 'none',
+            selectionHighlight: false,
+            occurrencesHighlight: false,
+            suggestOnTriggerCharacters: false,
+            quickSuggestions: false,
+            parameterHints: { enabled: false },
+            hover: { enabled: false },
+            contextmenu: false,
+            folding: false,
+            foldingStrategy: 'indentation',
+            showFoldingControls: 'never',
+            unfoldOnClickAfterEnd: false,
+            // Basic editor behavior
+            readOnly: false,
+            selectOnLineNumbers: true,
+            roundedSelection: false,
+            scrollBeyondLastColumn: 0,
+            smoothScrolling: false,
+            mouseWheelZoom: false,
+            // Disable all language features that might interfere
+            suggest: { showKeywords: false, showSnippets: false },
+            quickSuggestionsDelay: 0,
+            acceptSuggestionOnEnter: 'off',
+            tabCompletion: 'off',
+            wordBasedSuggestions: 'off',
+            // Ensure clean cursor behavior
+            multiCursorModifier: 'ctrlCmd',
+            dragAndDrop: false,
+            links: false,
+            colorDecorators: false,
+            lightbulb: { enabled: false },
+            codeLens: false,
+            foldingImportsByDefault: false,
+            showDeprecated: false,
+            inlayHints: { enabled: false },
+            // Cursor positioning options
+            cursorSurroundingLines: 0,
+            cursorSurroundingLinesStyle: 'all',
+            // Text alignment
+            fontLigatures: false,
+            fontVariations: false,
+            // Disable any text decorations that might affect alignment
+            decorations: {
+              rangeBehavior: 0,
+            },
           }}
         />
         {/* Resizer bar */}
