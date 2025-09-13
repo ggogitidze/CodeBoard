@@ -81,7 +81,10 @@ export default function CodeEditor({ sessionId }) {
       if (!containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
       let newHeight = e.clientY - containerRect.top - 48; // 48px for selector/buttons
-      newHeight = Math.max(120, Math.min(600, newHeight));
+      // Calculate max height to prevent crossing the Run Code button
+      // Account for: selector area (~48px), button height (~40px), button margin (~16px), output area min height (~90px), padding (~32px)
+      const maxHeight = containerRect.height - 48 - 40 - 16 - 90 - 32;
+      newHeight = Math.max(120, Math.min(maxHeight, newHeight));
       setEditorHeight(newHeight);
     };
     const handleMouseUp = () => {

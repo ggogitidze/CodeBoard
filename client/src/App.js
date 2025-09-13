@@ -11,7 +11,7 @@ function BoardWrapper() {
   const [guestName, setGuestName] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [input, setInput] = useState('');
-  const [whiteboardWidth, setWhiteboardWidth] = useState(40); // percentage
+  const [whiteboardWidth, setWhiteboardWidth] = useState(50); // percentage
   const [isDraggingHorizontal, setIsDraggingHorizontal] = useState(false);
   const containerRef = useRef(null);
 

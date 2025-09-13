@@ -343,12 +343,6 @@ export default function Whiteboard({ sessionId, guestName }) {
       {/* Whiteboard grid and canvas */}
       <div className="flex-1 flex items-center justify-center relative overflow-hidden min-w-0" style={{background:'#18122B'}} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp}>
         {/* Loading/Error overlays */}
-        {!wsConnected && !wsError && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
-            <span className="loader border-2 border-t-2 border-t-white border-white/30 rounded-full w-8 h-8 animate-spin mr-3"></span>
-            <span className="text-accentPurple text-lg font-bold">Connecting...</span>
-          </div>
-        )}
         {wsError && (
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60">
             <div className="bg-red-900/40 border border-red-700 rounded px-6 py-4 text-red-300 font-mono text-base shadow-xl">{wsError}</div>
